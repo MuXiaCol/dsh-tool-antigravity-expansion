@@ -84,6 +84,13 @@ pnpm add github:MuXiaCol/dsh-tool-antigravity-expansion
   name: 'dsh-tool-antigravity-expansion/image'
 ```
 
+> **维护提醒：改包名必须同步客户端注册 id**
+> `lib/client.cjs` 顶部的 `window.__ModuleLoader__.load({ id })` 必须与 `package.json` 的 `name` 完全一致。
+> Web 模块加载器按包名索引 client factory；两者不一致时同一 bundle 会被执行两次，渲染端抛出
+> `client-modules: duplicate factory registration: "旧包名"`，DSH 的启动检查再把它报成
+> `web boot: 1 entry did not activate / <包名>: import failed`——表现就是桌面端**无法启动**，
+> 而不是只在控制台报个错。改名后用 `sync.cmd` 下发前，先核对这一行。
+
 ---
 
 ## 常用指令与界面交互
