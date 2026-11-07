@@ -47,20 +47,31 @@
 pnpm add github:MuXiaCol/dsh-tool-antigravity-expansion
 ```
 
-### 方式二：本地开发目录链接引用
-在 `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 中添加：
+### 方式二：本地开发目录（profile 内副本）
+不把 `file:` 直接指向仓库，而是让包在 profile 内部形成一个副本，再把依赖指向内部路径：
+
+在 `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 中写：
 
 ```json
-"dsh-tool-antigravity-expansion": "file:D:/work/plugins/dsh-tool-antigravity"
+"dsh-tool-antigravity-expansion": "file:packages/dsh-tool-antigravity-expansion"
 ```
 
-> **注意（本地开发必须复制、不要只做软链）**
-> DSH 只对位于 profile 目录树内的模块提供 `@deepseek-ai/*` 运行包解析。
-> 若 `node_modules/dsh-tool-antigravity-expansion` 是指向仓库外的软链/联接，
-> Node 会 realpath 回仓库真实路径，插件内的 `import ... from '@deepseek-ai/dsh-llm'` 将以
-> `ERR_MODULE_NOT_FOUND` 失败，该插件的 Host 行不会激活（provider 不注册、设置面板不出现）。
-> 修改代码后请执行仓库根目录的 `sync.cmd`（或 `node scripts/sync-to-profile.mjs`）把包复制进 profile，
-> 然后重启 DeepSeek Harness。该脚本会检测并替换掉 pnpm 重新生成的本包软链。
+然后执行仓库根目录的 `sync.cmd`（或 `node scripts/sync-to-profile.mjs --fix-manifest`），
+它会生成最终布局：
+
+```
+<profile>/packages/dsh-tool-antigravity-expansion   仓库产物的副本（脚本镜像）
+<profile>/node_modules/dsh-tool-antigravity-expansion -> 上面这个目录（目录联接）
+```
+
+> **为什么不能把依赖直接写成 `file:D:/...`**
+> DSH 只对位于 profile 目录树内的模块提供 `@deepseek-ai/*` 运行包解析。指向仓库外的 `file:`
+> 依赖会装成软链，Node 随后 realpath 回仓库真实路径，插件内的
+> `import ... from '@deepseek-ai/dsh-llm'` 以 `ERR_MODULE_NOT_FOUND` 失败，Host 插件行不会激活
+> （provider 不注册、设置面板不出现、工具缺失）。把副本放在 profile 内后，即使之后在该 profile
+> 里跑 `pnpm install`，pnpm 重建的链接也只指向 profile 内部，插件保持可用。
+>
+> 改完代码执行 `sync.cmd`，然后重启 DeepSeek Harness。
 
 ### Cordis 插件配置
 在你的 `cordis.patch.yml` 或 DSH 配置文件中注入插件行：
