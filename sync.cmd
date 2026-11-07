@@ -1,9 +1,10 @@
 @echo off
 setlocal
-rem 把本仓库镜像到 DSH profile 的 packages/ 目录，并维护 node_modules 联接（不要直接 file: 指向仓库外）。
+rem Mirror this repo into the DSH profile packages directory and keep the node_modules junction.
+rem Never declare the plugin as file:D:/... from outside the profile (see README).
 set "NODE_EXE=node"
-if exist "C:\Users\www22\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe" (
-  set "NODE_EXE=C:\Users\www22\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe"
+if exist "%USERPROFILE%\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe" (
+  set "NODE_EXE=%USERPROFILE%\.dsh\dsh-runtimes\dsh-primary-runtime\dependencies\node\bin\node.exe"
 )
 "%NODE_EXE%" "%~dp0scripts\sync-to-profile.mjs" %*
 exit /b %errorlevel%
