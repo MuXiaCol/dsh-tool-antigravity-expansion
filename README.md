@@ -54,6 +54,14 @@ pnpm add github:MuXiaCol/dsh-tool-antigravity-expansion
 "dsh-tool-antigravity-expansion": "file:D:/work/plugins/dsh-tool-antigravity"
 ```
 
+> **注意（本地开发必须复制、不要只做软链）**
+> DSH 只对位于 profile 目录树内的模块提供 `@deepseek-ai/*` 运行包解析。
+> 若 `node_modules/dsh-tool-antigravity-expansion` 是指向仓库外的软链/联接，
+> Node 会 realpath 回仓库真实路径，插件内的 `import ... from '@deepseek-ai/dsh-llm'` 将以
+> `ERR_MODULE_NOT_FOUND` 失败，该插件的 Host 行不会激活（provider 不注册、设置面板不出现）。
+> 修改代码后请执行仓库根目录的 `sync.cmd`（或 `node scripts/sync-to-profile.mjs`）把包复制进 profile，
+> 然后重启 DeepSeek Harness。该脚本会检测并替换掉 pnpm 重新生成的本包软链。
+
 ### Cordis 插件配置
 在你的 `cordis.patch.yml` 或 DSH 配置文件中注入插件行：
 
