@@ -11,12 +11,6 @@
 
 ---
 
-## v0.5.3 版本重要更新
-
-- **修复 Claude VALIDATED 模式下 `anyOf` / `oneOf` 工具 Schema 校验报错 (解决 #12 / PR #13)**：彻底解决 `antigravity-claude-opus-5-5` 与 `antigravity-claude-sonnet-5-5` 在挂载含 `anyOf` 或 `oneOf` 联合类型的工具（如本插件自带的 `generate_image` 引用项、DSH 内置的定时任务、任务看板及 MCP 工具等）时触发 HTTP 400 `PROTOCOL_DRIFT` 的问题。
-- **Claude 工具 Schema 归一化与对象联合无损合并**：引入 `cleanClaudeSchema` 预处理机制，在单一 Schema 下无损合并多分支 `object` 判别联合属性及可扩展字符串枚举预设，并接入 `@cortexkit/antigravity-auth-core` 的 `toGeminiSchema(..., { claudeValidated: true })` 展平剩余异构联合。
-- **加固 Claude 工具参数类型提示**：标准化 `claudeToolTypeHint` 大小写转换，确保 `STRICT PARAMETERS:` 系统提示词中准确输出参数结构（如 `ARRAY_OF_OBJECTS[kind: string REQUIRED, handle: string, path: string]`），杜绝出现 `ARRAY_OF_UNKNOWN`。
-
 ## 核心特性与架构设计
 
 ### 1. 高性能底层架构
