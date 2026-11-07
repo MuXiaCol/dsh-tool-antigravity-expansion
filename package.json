@@ -1,7 +1,7 @@
 {
-  "name": "dsh-tool-antigravity",
-  "version": "0.5.3",
-  "description": "High-performance Antigravity capability bundle for DeepSeek Harness with smart multi-account quota rotation, multi-model routing, and Nano Banana 2 image generation",
+  "name": "dsh-tool-antigravity-expansion",
+  "version": "0.5.3-expansion",
+  "description": "DeepSeek Harness Antigravity 插件深度扩展版 (自愈/长连接/配额修复)",
   "type": "module",
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
@@ -12,11 +12,11 @@
   "author": "Jaylor-Wang",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Jaylor-Wang/dsh-tool-antigravity.git"
+    "url": "https://github.com/MuXiaCol/dsh-tool-antigravity-expansion.git"
   },
-  "homepage": "https://github.com/Jaylor-Wang/dsh-tool-antigravity#readme",
+  "homepage": "https://github.com/MuXiaCol/dsh-tool-antigravity-expansion#readme",
   "bugs": {
-    "url": "https://github.com/Jaylor-Wang/dsh-tool-antigravity/issues"
+    "url": "https://github.com/MuXiaCol/dsh-tool-antigravity-expansion/issues"
   },
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
@@ -92,7 +92,6 @@
     "lib/types/**/*.d.ts.map",
     "cordis.patch.yml",
     "README.md",
-    "README.zh.md",
     "LICENSE"
   ],
   "scripts": {
