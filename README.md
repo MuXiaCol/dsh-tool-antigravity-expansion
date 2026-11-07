@@ -1,10 +1,8 @@
-# dsh-tool-antigravity
+# dsh-tool-antigravity-expansion
 
-
-[![npm version](https://img.shields.io/npm/v/dsh-tool-antigravity.svg?color=blue)](https://www.npmjs.com/package/dsh-tool-antigravity)
-[![license](https://img.shields.io/github/license/Jaylor-Wang/dsh-tool-antigravity.svg)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/Jaylor-Wang/dsh-tool-antigravity.svg)](https://github.com/Jaylor-Wang/dsh-tool-antigravity/releases)
-[![Tests](https://img.shields.io/badge/tests-39%20suites%20%7C%20425%20passed-brightgreen.svg)](tests/)
+[![GitHub](https://img.shields.io/github/license/MuXiaCol/dsh-tool-antigravity-expansion.svg)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/MuXiaCol/dsh-tool-antigravity-expansion.svg?color=blue)](https://github.com/MuXiaCol/dsh-tool-antigravity-expansion/releases)
+[![Tests](https://img.shields.io/badge/tests-pass-brightgreen.svg)](tests/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-Strict%20Types-blue.svg)](tsconfig.json)
 
 为 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH) 打造的高性能 Antigravity 核心能力包插件。
@@ -48,19 +46,18 @@
 
 ## 安装与快速上手
 
-### 通过 DSH 插件命令安装（推荐）
+### 方式一：通过 GitHub 仓库安装（推荐）
+在你的 DSH 桌面端目录执行：
+
 ```sh
-# 直接安装到当前激活的 web profile
-dsh plugin --profile web add dsh-tool-antigravity
+pnpm add github:MuXiaCol/dsh-tool-antigravity-expansion
 ```
 
-### 通过 npm / pnpm 安装
-```sh
-# 使用 npm
-npm install dsh-tool-antigravity
+### 方式二：本地开发目录链接引用
+在 `~/.dsh/profiles/desktop/package.json` 的 `dependencies` 中添加：
 
-# 使用 pnpm
-pnpm add dsh-tool-antigravity
+```json
+"dsh-tool-antigravity-expansion": "file:D:/work/plugins/dsh-tool-antigravity"
 ```
 
 ### Cordis 插件配置
@@ -68,10 +65,10 @@ pnpm add dsh-tool-antigravity
 
 ```yaml
 - id: antigravity-auth
-  name: 'dsh-tool-antigravity'
+  name: 'dsh-tool-antigravity-expansion'
 
 - id: antigravity-image
-  name: 'dsh-tool-antigravity/image'
+  name: 'dsh-tool-antigravity-expansion/image'
 ```
 
 ---

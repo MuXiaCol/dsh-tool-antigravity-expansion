@@ -2,6 +2,6 @@
 # OAuth, LLM routing, and private I/O stay on Host; each row owns its public capability seam.
 - insert:
     - id: antigravity-auth
-      name: 'dsh-tool-antigravity'
+      name: 'dsh-tool-antigravity-expansion'
     - id: antigravity-image
-      name: 'dsh-tool-antigravity/image'
+      name: 'dsh-tool-antigravity-expansion/image'
