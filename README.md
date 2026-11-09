@@ -57,11 +57,15 @@ pnpm add github:MuXiaCol/dsh-tool-antigravity-expansion
 ```
 
 然后执行仓库根目录的 `sync.cmd`（或 `node scripts/sync-to-profile.mjs --fix-manifest`），
-它会生成最终布局：
+脚本会连同 profile 清单和 `pnpm-lock.yaml` 里本包的依赖记录一起校正——否则下次在这
+个 profile 里 `pnpm install`（例如安装别的插件）会按旧锁文件把链接改回仓库路径，
+插件又会悄悄失效。它会依次完成：
 
 ```
 <profile>/packages/dsh-tool-antigravity-expansion   仓库产物的副本（脚本镜像）
 <profile>/node_modules/dsh-tool-antigravity-expansion -> 上面这个目录（目录联接）
+<profile>/package.json       本包依赖 = file:packages/dsh-tool-antigravity-expansion
+<profile>/pnpm-lock.yaml     本包记录 = file:/link: packages/dsh-tool-antigravity-expansion
 ```
 
 > **为什么不能把依赖直接写成 `file:D:/...`**

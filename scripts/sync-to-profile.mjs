@@ -18,7 +18,7 @@
  *
  * 用法:
  *   node scripts/sync-to-profile.mjs                  # 同步产物并维护链接
- *   node scripts/sync-to-profile.mjs --fix-manifest   # 顺便把 profile 依赖改为内部路径
+ *   node scripts/sync-to-profile.mjs --fix-manifest   # 顺便把 profile 依赖与 pnpm 锁文件改为内部路径
  *   node scripts/sync-to-profile.mjs --profile web
  *   node scripts/sync-to-profile.mjs --home <dir>
  *   node scripts/sync-to-profile.mjs --dry-run
@@ -173,6 +173,44 @@ function fixManifest(options) {
   fs.writeFileSync(options.manifest, `${JSON.stringify(manifest, null, 2)}\n`)
 }
 
+/**
+ * 把 pnpm 锁文件里本包的依赖记录校正为 profile 内部路径。
+ * 不校正时，下一次 profile 内的 pnpm 安装会按旧 lockfile 把 node_modules
+ * 链接重新指回仓库目录，插件随即因 @deepseek-ai/* 解析失败而不再加载。
+ */
+function fixLockfile(options) {
+  const lockfile = path.join(options.profileDir, 'pnpm-lock.yaml')
+  if (!fs.existsSync(lockfile)) {
+    console.log('- 没有 pnpm-lock.yaml，跳过锁文件校正')
+    return
+  }
+  const text = fs.readFileSync(lockfile, 'utf8')
+  const expectedSpecifier = MANIFEST_SPECIFIER
+  const expectedVersion = `link:packages/${PACKAGE_NAME}`
+  const name = PACKAGE_NAME.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const block = new RegExp(`(\\n      ${name}:\\n        specifier: )([^\\n]+)(\\n        version: )([^\\n]+)`)
+  const match = text.match(block)
+  if (!match) {
+    console.log('- 锁文件里没有本包条目，跳过')
+    return
+  }
+  if (match[2] === expectedSpecifier && match[4] === expectedVersion) {
+    console.log(`- 锁文件已是内部路径: ${expectedSpecifier}`)
+    return
+  }
+  if (!options.fixManifest) {
+    console.log(`! 锁文件仍指向外部（下次 pnpm 安装会把链接改回去）: ${match[4]}`)
+    console.log('  加 --fix-manifest 可一并改成内部路径')
+    return
+  }
+  console.log(`- 锁文件依赖记录: ${match[2]} / ${match[4]} -> ${expectedSpecifier} / ${expectedVersion}`)
+  if (options.dryRun) return
+  const backup = `${lockfile}.bak-agy-${timestamp()}`
+  fs.copyFileSync(lockfile, backup)
+  console.log(`- 锁文件已备份: ${backup}`)
+  fs.writeFileSync(lockfile, text.replace(block, `$1${expectedSpecifier}$3${expectedVersion}`))
+}
+
 function main() {
   const options = parseArgs(process.argv.slice(2))
   assertSafeTargets(options)
@@ -190,6 +228,7 @@ function main() {
   for (const entry of INCLUDE) copyEntry(entry, options)
   ensureLink(options)
   fixManifest(options)
+  fixLockfile(options)
 
   console.log('\n完成。请重启 DeepSeek Harness，让 Host 重新加载插件。')
 }
