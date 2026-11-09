@@ -14,10 +14,10 @@
 ## 核心特性与架构设计
 
 ### 1. 高性能底层架构
-- **真·底层长连接池与 TLS 1.3 会话票据复用 (Session Resumption)**：推理请求走全局 TLS Socket 复用池，空闲连接保持 drain 态并监听 `end`/`close` 自动出池，复用连接设 20s 快失败上限、仅在「零字节回包」时静默重连重发，既消除重复握手又不重复计费式重试；TLS Session Ticket 缓存进一步把重连握手压到 1-RTT/0-RTT。
-- **工具调用 JSON 容错自愈 (JSON Auto-Repair)**：深度内置非标 JSON 自愈引擎，自动修复模型输出中未闭合引号/括号、尾随逗号以及 Windows 路径未转义反斜杠，杜绝流式解析触发的 `protocol-drift` 致命异常。
+- **真·底层长连接池与 TLS 1.3 会话票据复用 (Session Resumption)**：推理请求走全局 TLS Socket 复用池，空闲连接保持 drain 态并监听 `end`/`close`/`error` 自动出池与 50s Keep-Alive TTL 淘汰机制，复用连接设 20s 快失败上限、仅在「零字节回包」时静默重连重发，既消除重复握手又不重复计费式重试；TLS Session Ticket 缓存进一步把重连握手压到 1-RTT/0-RTT。
+- **工具调用 JSON 容错自愈 (JSON Auto-Repair)**：深度内置非标 JSON 自愈引擎，自动修复模型输出中未闭合引号/括号、尾随逗号、字符串内裸换行/控制字符以及 Windows 路径未转义反斜杠，杜绝流式解析触发的 `protocol-drift` 致命异常。
 - **长对话思考签名滑动窗口修剪 (Thought Signature Pruning)**：引入智能上下文签名修剪，仅保留最近 3 轮活跃助手的完整思考签名，自动对陈旧历史轮次进行安全剥离，降低长对话下 70%~90% 的冗余 Payload 传输与 GC 压力。
-- **高吞吐 Buffer 游标滑动与零拷贝字节计算**：在二进制 Buffer 字节层精确定位换行符并切片解码，SSE 单行采用原生 `Buffer.byteLength` 规避海量临时 `TextEncoder` 对象分配，杜绝 V8 堆内存颠簸。
+- **高吞吐 Buffer 游标滑动与零拷贝字节计算**：在二进制 Buffer 字节层精确定位换行符并切片解码，SSE 单行复用单次字节计算规避海量临时 `TextEncoder` 对象分配与重复 `Buffer.byteLength` 运算，杜绝 V8 堆内存颠簸。
 - **细粒度思考预算调控**：全面支持 Gemini 3.8/3.7/3.6 Flash、Gemini 3.1 Pro 与 Claude 系列模型的思维链深度配置（`low`, `medium`, `high`）。
 - **前置幂等断线自愈**：在流式首字节发出前遇到瞬时网络异常（如 TLS RST / 502 / 503 / 504）时自动平滑重试最多 3 次，提升模型生成稳定性。
 - **Windows 文件锁活性探测**：引入 `process.kill(pid, 0)` 探测，若持有锁的外部进程已异常退出，立即主动回收锁，杜绝 30 秒卡死等待。

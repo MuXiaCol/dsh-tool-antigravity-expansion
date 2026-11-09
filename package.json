@@ -1,7 +1,7 @@
 {
   "name": "dsh-tool-antigravity-expansion",
-  "version": "0.5.6",
-  "description": "DeepSeek Harness Antigravity 插件深度扩展版 (自愈/安全长连接池/配额修复/签名优化)",
+  "version": "0.5.7",
+  "description": "DeepSeek Harness Antigravity 插件深度扩展版 (自愈/安全长连接池TTL/配额修复/签名优化/JSON健壮自愈)",
   "type": "module",
   "engines": {
     "node": "^22.19.0 || >=24.0.0"
